@@ -5,5 +5,6 @@
              version="3.0">
     <persistence-unit name="default">
 
+        <class>com.agilescrum.agilescrum.entities.User</class>
     </persistence-unit>
 </persistence>
