@@ -4,6 +4,7 @@ public class UserDto {
     Long id;
     String username;
     String email;
+    String usergroup;
 
     public UserDto(Long id, String username, String email) {
         this.id = id;
@@ -23,4 +24,11 @@ public class UserDto {
         return email;
     }
 
+    public String getUsergroup() {
+        return usergroup;
+    }
+
+    public void setUsergroup(String usergroup) {
+        this.usergroup = usergroup;
+    }
 }

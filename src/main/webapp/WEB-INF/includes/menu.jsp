@@ -24,6 +24,11 @@
             </li>
             </c:when>
             <c:otherwise>
+              <c:if test = "${pageContext.request.isUserInRole('RESEARCH') || pageContext.request.isUserInRole('ADMIN')}">
+                <a class="nav-link" href="${pageContext.request.contextPath}/Usergroups">Roles</a>
+                </li>
+                <li class="nav-item">
+              </c:if>
               <a class="nav-link" href="${pageContext.request.contextPath}/Logout">Logout</a>
             </c:otherwise>
           </c:choose>

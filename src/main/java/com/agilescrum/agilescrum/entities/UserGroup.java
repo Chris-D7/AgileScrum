@@ -18,11 +18,11 @@ public class UserGroup {
         this.id = id;
     }
 
-    public String getUsername() {
+    public String getEmail() {
         return email;
     }
 
-    public void setUsername(String username) {
+    public void setEmail(String username) {
         this.email = username;
     }
 

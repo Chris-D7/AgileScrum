@@ -2,7 +2,6 @@ package com.agilescrum.agilescrum.ejb;
 
 import com.agilescrum.agilescrum.common.UserDto;
 import com.agilescrum.agilescrum.entities.User;
-import com.agilescrum.agilescrum.entities.UserGroup;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
@@ -11,7 +10,8 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jdk.jpackage.internal.Log;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Stateless
@@ -26,20 +26,40 @@ public class UserBean {
     EntityManager entityManager;
 
     public UserDto findCurrentUser(Long id) {
-        Log.info("findCurrentUser");
+        LOG.info("findCurrentUser");
         try {
             TypedQuery<User> typedQuery = entityManager.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class);
             typedQuery.setParameter("id", id);
             User user = typedQuery.getSingleResult();
-            return copyUserToDto(user);
+            return copySingleUserToDto(user);
         } catch (Exception ex) {
             throw new EJBException(ex);
         }
     }
 
-    private UserDto copyUserToDto(User user){
+    public List<UserDto> findAllUsers(){
+        LOG.info("findAllUsers");
+        try{
+            TypedQuery<User> typedQuery = entityManager.createQuery("SELECT u FROM User u", User.class);
+            List<User> users = typedQuery.getResultList();
+            return copyUsersToDto(users);
+        } catch(Exception ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    private UserDto copySingleUserToDto(User user){
         UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail());
         return userDto;
+    }
+
+    private List<UserDto> copyUsersToDto(List<User> users){
+        List<UserDto> userDtos = new ArrayList<>();
+        users.forEach(x -> {
+            UserDto userDto = new UserDto(x.getId(), x.getUsername(), x.getEmail());
+            userDtos.add(userDto);
+        });
+        return userDtos;
     }
 
     public void createUser(String username, String email, String password) {

@@ -1,6 +1,7 @@
 package com.agilescrum.agilescrum.servlets;
 
 import com.agilescrum.agilescrum.ejb.UserBean;
+import com.agilescrum.agilescrum.ejb.UsergroupsBean;
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -17,6 +18,9 @@ public class Register extends HttpServlet {
 
     @Inject
     UserBean userBean;
+
+    @Inject
+    UsergroupsBean usergroupsBean;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
