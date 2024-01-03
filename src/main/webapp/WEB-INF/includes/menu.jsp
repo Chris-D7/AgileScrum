@@ -25,7 +25,7 @@
             </c:when>
             <c:otherwise>
               <c:if test = "${pageContext.request.isUserInRole('RESEARCH') || pageContext.request.isUserInRole('ADMIN')}">
-                <a class="nav-link" href="${pageContext.request.contextPath}/Usergroups">Roles</a>
+                <a class="nav-link ${activePage eq 'Usergroups' ? ' active ' : ''}" href="${pageContext.request.contextPath}/Usergroups">Roles</a>
                 </li>
                 <li class="nav-item">
               </c:if>

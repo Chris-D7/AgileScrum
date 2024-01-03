@@ -64,20 +64,14 @@ public class UserBean {
 
     public void createUser(String username, String email, String password) {
         LOG.info("createUser");
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setEmail(email);
-        newUser.setPassword(passwordBean.convertToSha256(password));
-        entityManager.persist(newUser);
-    }
-
-    /*private void assignGroupsToUser(String email, Collection<String> groups) {
-        LOG.info("assignGroupsToUser");
-        for (String group : groups) {
-            UserGroup userGroup = new UserGroup();
-            userGroup.setUsername(email);
-            userGroup.setUserGroup(group);
-            entityManager.persist(userGroup);
+        try {
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setEmail(email);
+            newUser.setPassword(passwordBean.convertToSha256(password));
+            entityManager.persist(newUser);
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
-    }*/
+    }
 }

@@ -39,6 +39,7 @@ public class Register extends HttpServlet {
             return;
         }
         userBean.createUser(username, email, password);
+        usergroupsBean.createUsergroup(email);
         response.sendRedirect(request.getContextPath() + "/Login");
     }
 

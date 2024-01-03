@@ -22,9 +22,9 @@
                     <td>${user.email}</td>
                     <td>
                         <c:if test = "${pageContext.request.isUserInRole('ADMIN')}">
-                            <select name="userRole">
+                            <select name="userRole=-=${user.email}">
                                 <c:forEach var="role" items="${rolesList}">
-                                    <option value="${role}=-=${user.email}" ${role eq user.usergroup ? 'selected' : ''}>${role}</option>
+                                    <option value="${role}" ${role eq user.usergroup ? 'selected' : ''}>${role}</option>
                                 </c:forEach>
                             </select>
                         </c:if>

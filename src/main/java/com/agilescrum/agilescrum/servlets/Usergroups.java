@@ -12,10 +12,13 @@ import jdk.jpackage.internal.Log;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 @DeclareRoles({"ADMIN", "RESEARCH", "COMMON"})
-@ServletSecurity(value = @HttpConstraint(rolesAllowed = {"ADMIN", "RESEARCH"}))
+@ServletSecurity(value = @HttpConstraint(rolesAllowed = {"ADMIN", "RESEARCH"}),
+        httpMethodConstraints = {@HttpMethodConstraint(value = "POST", rolesAllowed =
+                {"ADMIN"})})
 @WebServlet(name = "Usergroups", value = "/Usergroups")
 public class Usergroups extends HttpServlet {
 
@@ -27,6 +30,7 @@ public class Usergroups extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("activePage", "Usergroups");
         List<UserDto> users = userBean.findAllUsers();
         for (UserDto user : users) {
             String usergroup = usergroupsBean.findUsergroupRole(user.getEmail());
@@ -39,16 +43,19 @@ public class Usergroups extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userRole = request.getParameter("userRole");
-        String[] parts = userRole.split("=-=");
-        String role = null, email = null;
-        if (parts.length == 2) {
-            role = parts[0];
-            email = parts[1];
+        Enumeration<String> parameterNames = request.getParameterNames();
+
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+
+            if (paramName.startsWith("userRole=-=")) {
+                String email = paramName.substring("userRole=-=".length());
+                String role = request.getParameter(paramName);
+
+                usergroupsBean.updateUsergroup(email, role);
+            }
         }
 
-        usergroupsBean.updateUsergroup(email, role);
-
-        response.sendRedirect(request.getContextPath()+"/Usergroups");
+        response.sendRedirect(request.getContextPath() + "/Usergroups");
     }
 }

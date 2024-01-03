@@ -35,16 +35,14 @@ public class UsergroupsBean {
     public Long findUsergroupId(String email){
         LOG.info("findUsergroupId");
         try {
-            // Assume you have an Entity named User with a field userGroupId
             Long usergroupId = (Long) entityManager.createQuery(
                             "SELECT u.id FROM UserGroup u WHERE u.email = :email")
                     .setParameter("email", email)
                     .getSingleResult();
             return usergroupId;
         } catch (Exception e) {
-            // Handle exceptions (e.g., entity not found, database issues)
             LOG.warning("Error finding user group ID: " + e.getMessage());
-            return null; // or throw an exception, depending on your error handling strategy
+            return null;
         }
     }
 
@@ -59,6 +57,18 @@ public class UsergroupsBean {
             LOG.info("Usergroup updated successfully");
         } else {
             LOG.warning("No UserGroup found for email: " + email);
+        }
+    }
+
+    public void createUsergroup(String email){
+        LOG.info("createUsergroup");
+        try {
+            UserGroup userGroup = new UserGroup();
+            userGroup.setEmail(email);
+            userGroup.setUserGroup("COMMON");
+            entityManager.persist(userGroup);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
