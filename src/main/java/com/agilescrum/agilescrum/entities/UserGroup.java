@@ -1,5 +1,6 @@
 package com.agilescrum.agilescrum.entities;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -7,8 +8,6 @@ import jakarta.persistence.Id;
 @Entity
 public class UserGroup {
     private Long id;
-    private String email;
-    private String userGroup;
 
     @Id
     @GeneratedValue
@@ -17,6 +16,9 @@ public class UserGroup {
     public void setId(Long id) {
         this.id = id;
     }
+
+    private String email;
+    private String userGroup;
 
     public String getEmail() {
         return email;

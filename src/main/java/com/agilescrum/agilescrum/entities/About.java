@@ -2,6 +2,7 @@ package com.agilescrum.agilescrum.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 @Entity
 public class About {
@@ -17,6 +18,7 @@ public class About {
         return Id;
     }
 
+    @Lob
     String aboutText;
 
     public String getAboutText() {

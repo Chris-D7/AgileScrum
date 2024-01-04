@@ -6,6 +6,7 @@ import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jdk.jpackage.internal.Log;
@@ -32,6 +33,17 @@ public class UserBean {
             typedQuery.setParameter("id", id);
             User user = typedQuery.getSingleResult();
             return copySingleUserToDto(user);
+        } catch (Exception ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    public String findUsernameByEmail(String email) {
+        LOG.info("findUsernameByEmail");
+        try {
+            TypedQuery<String> typedQuery = entityManager.createQuery("SELECT u.username FROM User u WHERE u.email = :email", String.class);
+            typedQuery.setParameter("email", email);
+            return typedQuery.getSingleResult();
         } catch (Exception ex) {
             throw new EJBException(ex);
         }
