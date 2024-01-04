@@ -1,10 +1,10 @@
 package com.agilescrum.agilescrum.common;
 
 public class UserDto {
-    Long id;
-    String username;
-    String email;
-    String usergroup;
+    private Long id;
+    private String username;
+    private String email;
+    private String usergroup;
 
     public UserDto(Long id, String username, String email) {
         this.id = id;

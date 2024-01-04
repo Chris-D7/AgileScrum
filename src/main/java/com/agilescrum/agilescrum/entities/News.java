@@ -1,8 +1,6 @@
 package com.agilescrum.agilescrum.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -25,8 +23,9 @@ public class News {
     private String title;
     private String body;
     private String author;
+    private String email;
     private LocalDateTime datePosted;
-    private String image;
+    private NewsPhoto image;
 
     public String getTitle() {
         return title;
@@ -52,6 +51,14 @@ public class News {
         this.author = author;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public LocalDateTime getDatePosted() {
         return datePosted;
     }
@@ -60,11 +67,12 @@ public class News {
         this.datePosted = datePosted;
     }
 
-    public String getImage() {
+    @OneToOne(mappedBy = "news", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public NewsPhoto getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(NewsPhoto image) {
         this.image = image;
     }
 }

@@ -17,6 +17,7 @@ import java.util.List;
 @DeclareRoles({"ADMIN", "RESEARCH", "COMMON"})
 @ServletSecurity(httpMethodConstraints = {@HttpMethodConstraint(value = "POST", rolesAllowed =
         {"ADMIN", "RESEARCH"})})
+@MultipartConfig
 @WebServlet(name = "News", value = "/News")
 public class News extends HttpServlet {
 
@@ -28,9 +29,11 @@ public class News extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<NewsDto> newsList = newsBean.findAllNews();
+        List<NewsDto> newsList = newsBean.findAllNewsDesc();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        newsList.forEach(x -> x.setDatePostedFormatted(x.getDatePosted().format(formatter)));
+        newsList.forEach(x -> {
+            x.setDatePostedFormatted(x.getDatePosted().format(formatter));
+        });
         request.setAttribute("newsList", newsList);
         request.setAttribute("activePage", "News");
         request.getRequestDispatcher("/WEB-INF/pages/news.jsp").forward(request, response);
@@ -40,9 +43,20 @@ public class News extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String title = request.getParameter("newsTitle");
         String body = request.getParameter("newsBody");
-        String author = userBean.findUsernameByEmail(request.getParameter("newsAuthor"));
+        String email = request.getParameter("newsAuthor");
+        String author = userBean.findUsernameByEmail(email);
+        //String author = request.getParameter("newsAuthor");
         LocalDateTime currentDateTime = LocalDateTime.now();
-        newsBean.createNews(title, body, author, currentDateTime);
+
+        Part filePart = request.getPart("file");
+        String fileName = filePart.getSubmittedFileName();
+        String fileType = filePart.getContentType();
+        long fileSize = filePart.getSize();
+        byte[] fileContent = new byte[(int) fileSize];
+        filePart.getInputStream().read(fileContent);
+
+        com.agilescrum.agilescrum.entities.News createdNews = newsBean.createNewsReturn(title, body, author, email, currentDateTime);
+        newsBean.addPhotoToNews(createdNews.getId(), fileName, fileType, fileContent);
         response.sendRedirect(request.getContextPath() + "/News");
     }
 }
