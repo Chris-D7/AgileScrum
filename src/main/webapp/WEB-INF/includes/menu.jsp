@@ -13,6 +13,9 @@
           <a class="nav-link ${activePage eq 'News' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/News">News</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link ${activePage eq 'Teams' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/Teams">Teams</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link ${activePage eq 'About' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/About">About</a>
         </li>
       </ul>

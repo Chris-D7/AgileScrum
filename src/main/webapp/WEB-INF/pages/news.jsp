@@ -3,7 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<t:pageTemplate pageTitle="About">
+<t:pageTemplate pageTitle="News">
   <h1>NEWS</h1>
 
   <c:if test="${pageContext.request.isUserInRole('RESEARCH') || pageContext.request.isUserInRole('ADMIN')}">

@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jdk.jfr.Frequency;
 import jdk.jpackage.internal.Log;
 
 import java.util.ArrayList;
@@ -44,6 +45,17 @@ public class UserBean {
             TypedQuery<String> typedQuery = entityManager.createQuery("SELECT u.username FROM User u WHERE u.email = :email", String.class);
             typedQuery.setParameter("email", email);
             return typedQuery.getSingleResult();
+        } catch (Exception ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    public Long findIdByEmail(String email) {
+        LOG.info("findIdByEmail");
+        try {
+            TypedQuery<String> typedQuery = entityManager.createQuery("SELECT u.id FROM User u WHERE u.email = :email", String.class);
+            typedQuery.setParameter("email", email);
+            return Long.parseLong(typedQuery.getSingleResult());
         } catch (Exception ex) {
             throw new EJBException(ex);
         }
