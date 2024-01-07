@@ -42,7 +42,7 @@ public class Teams {
         this.master = master;
     }
 
-    @OneToMany(mappedBy = "team")
+    @ManyToMany(mappedBy = "teams")
     public Collection<User> getMembers() {
         return members;
     }

@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -30,10 +31,23 @@ public class TeamsBean {
                 .setParameter("email", email)
                 .getSingleResult();*/
         List<Teams> teams = entityManager.createQuery(
-                        "SELECT t FROM Teams t WHERE t.master.email = :email OR :email MEMBER OF t.members", Teams.class)
+                        "SELECT t FROM Teams t LEFT JOIN t.members m WHERE t.master.email = :email OR m.email = :email", Teams.class)
                 .setParameter("email", email)
                 .getResultList();
         return copyTeamsToDto(teams);
+    }
+
+    public TeamsDto findTeamById(Long id){
+        Teams team = entityManager.find(Teams.class, id);
+        User master = team.getMaster();
+        UserDto masterDto = new UserDto(master.getId(), master.getUsername(), master.getEmail());
+        Collection<User> users = team.getMembers();
+        List<UserDto> userDtos = new ArrayList<>();
+        users.forEach(x -> {
+            UserDto userDto = new UserDto(x.getId(), x.getUsername(), x.getEmail());
+            userDtos.add(userDto);
+        });
+        return new TeamsDto(team.getId(), team.getSubject(), masterDto, userDtos);
     }
 
     private List<TeamsDto> copyTeamsToDto(List<Teams> teams) {

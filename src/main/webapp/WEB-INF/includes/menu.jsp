@@ -12,9 +12,11 @@
         <li class="nav-item">
           <a class="nav-link ${activePage eq 'News' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/News">News</a>
         </li>
+        <c:if test="${pageContext.request.getRemoteUser() != null && (pageContext.request.isUserInRole('RESEARCH') || pageContext.request.isUserInRole('ADMIN') || pageContext.request.isUserInRole('COMMON'))}">
         <li class="nav-item">
           <a class="nav-link ${activePage eq 'Teams' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/Teams">Teams</a>
         </li>
+        </c:if>
         <li class="nav-item">
           <a class="nav-link ${activePage eq 'About' ? ' active ' : ''}" aria-current="page" href="${pageContext.request.contextPath}/About">About</a>
         </li>

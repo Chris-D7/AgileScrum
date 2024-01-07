@@ -35,6 +35,7 @@ public class News {
         this.title = title;
     }
 
+    @Lob
     public String getBody() {
         return body;
     }

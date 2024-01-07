@@ -1,9 +1,8 @@
 package com.agilescrum.agilescrum.entities;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.Collection;
 
 @Entity
 public class User {
@@ -34,6 +33,8 @@ public class User {
 
     private String password;
 
+    private Collection<Teams> teams;
+
     public String getEmail() {
         return email;
     }
@@ -48,5 +49,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @ManyToMany
+    public Collection<Teams> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Collection<Teams> teams) {
+        this.teams = teams;
     }
 }

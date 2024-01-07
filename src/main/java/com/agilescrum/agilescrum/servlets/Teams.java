@@ -19,8 +19,8 @@ public class Teams extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<TeamsDto> teams = teamsBean.findTeamsForCurrentUser(request.getRemoteUser());
-        request.setAttribute("teams", teams);
-        request.setAttribute("activePage", "TeamsDto");
+        request.setAttribute("teamsList", teams);
+        request.setAttribute("activePage", "Teams");
         request.getRequestDispatcher("/WEB-INF/pages/teams.jsp").forward(request, response);
     }
 
