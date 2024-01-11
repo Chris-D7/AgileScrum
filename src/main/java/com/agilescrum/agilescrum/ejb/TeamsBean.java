@@ -7,6 +7,7 @@ import com.agilescrum.agilescrum.entities.User;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 
 import java.util.ArrayList;
@@ -31,13 +32,13 @@ public class TeamsBean {
                 .setParameter("email", email)
                 .getSingleResult();*/
         List<Teams> teams = entityManager.createQuery(
-                        "SELECT t FROM Teams t LEFT JOIN t.members m WHERE t.master.email = :email OR m.email = :email", Teams.class)
+                        "SELECT DISTINCT t FROM Teams t LEFT JOIN t.members m WHERE t.master.email = :email OR m.email = :email", Teams.class)
                 .setParameter("email", email)
                 .getResultList();
         return copyTeamsToDto(teams);
     }
 
-    public TeamsDto findTeamById(Long id){
+    public TeamsDto findTeamById(Long id) {
         Teams team = entityManager.find(Teams.class, id);
         User master = team.getMaster();
         UserDto masterDto = new UserDto(master.getId(), master.getUsername(), master.getEmail());
@@ -68,4 +69,76 @@ public class TeamsBean {
         return teamsDto;
     }
 
+    public void createTeam(String subject, String masterEmail) {
+        try {
+            User master = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", masterEmail)
+                    .getSingleResult();
+
+            Teams newTeam = new Teams();
+            newTeam.setSubject(subject);
+            newTeam.setMaster(master);
+
+            entityManager.persist(newTeam);
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void deleteTeam(Long teamId) {
+        try {
+            Teams teamToDelete = entityManager.find(Teams.class, teamId);
+            teamToDelete.getMembers().forEach(x -> {
+                x.getTeams().remove(teamToDelete);
+            });
+            if (teamToDelete != null) {
+                entityManager.remove(teamToDelete);
+            } else {
+                LOG.warning("Team with ID " + teamId + " not found. Unable to delete.");
+            }
+        } catch (Exception ex) {
+            LOG.severe("Error deleting team with ID " + teamId + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void addMemberToTeam(Long teamId, String memberEmail) {
+        try {
+            Teams team = entityManager.find(Teams.class, teamId);
+            User member = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", memberEmail)
+                    .getSingleResult();
+
+            if (team != null && member != null) {
+                member.getTeams().add(team);
+                team.getMembers().add(member);
+                entityManager.merge(team);
+                entityManager.merge(member);
+            } else {
+                LOG.warning("Team or member not found. Unable to add member to the team.");
+            }
+        } catch (Exception ex) {
+            LOG.severe("Error adding member to team: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void deleteMemberFromTeam(Long teamId, Long memberId) {
+        try {
+            Teams team = entityManager.find(Teams.class, teamId);
+            User member = entityManager.find(User.class, memberId);
+
+            if (team != null && member != null) {
+                team.getMembers().remove(member);
+                member.getTeams().remove(team);
+                entityManager.merge(team);
+                entityManager.merge(member);
+            } else {
+                LOG.warning("Team or member not found. Unable to delete member from the team.");
+            }
+        } catch (Exception ex) {
+            LOG.severe("Error deleting member from team: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 }
