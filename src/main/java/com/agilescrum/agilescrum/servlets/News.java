@@ -44,7 +44,6 @@ public class News extends HttpServlet {
         String title = request.getParameter("newsTitle");
         String body = request.getParameter("newsBody");
         String email = request.getParameter("newsAuthor");
-        String author = userBean.findUsernameByEmail(email);
         //String author = request.getParameter("newsAuthor");
         LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -55,7 +54,7 @@ public class News extends HttpServlet {
         byte[] fileContent = new byte[(int) fileSize];
         filePart.getInputStream().read(fileContent);
 
-        com.agilescrum.agilescrum.entities.News createdNews = newsBean.createNewsReturn(title, body, author, email, currentDateTime);
+        com.agilescrum.agilescrum.entities.News createdNews = newsBean.createNewsReturn(title, body, email, currentDateTime);
         newsBean.addPhotoToNews(createdNews.getId(), fileName, fileType, fileContent);
         response.sendRedirect(request.getContextPath() + "/News");
     }

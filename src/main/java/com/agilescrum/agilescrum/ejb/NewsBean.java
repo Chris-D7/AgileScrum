@@ -4,9 +4,11 @@ import com.agilescrum.agilescrum.common.NewsDto;
 import com.agilescrum.agilescrum.common.NewsPhotoDto;
 import com.agilescrum.agilescrum.entities.News;
 import com.agilescrum.agilescrum.entities.NewsPhoto;
+import com.agilescrum.agilescrum.entities.User;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
@@ -38,11 +40,12 @@ public class NewsBean {
     public List<NewsDto> copyNewsToDto(List<News> newsList) {
         List<NewsDto> newsDtos = new ArrayList<>();
         newsList.forEach(x -> {
+            User author = x.getAuthor();
             NewsDto newsDto = new NewsDto(
                     x.getId(),
                     x.getTitle(),
                     x.getBody(),
-                    x.getAuthor(),
+                    author.getUsername(),
                     x.getEmail(),
                     x.getDatePosted(),
                     x.getImage()
@@ -52,8 +55,9 @@ public class NewsBean {
         return newsDtos;
     }
 
-    public void createNews(String title, String body, String author, String email, LocalDateTime datePosted) {
+    public void createNews(String title, String body, String email, LocalDateTime datePosted) {
         LOG.info("createNews");
+        User author = getUserByEmail(email);
         try {
             News newNews = new News();
             newNews.setTitle(title);
@@ -67,20 +71,37 @@ public class NewsBean {
         }
     }
 
-    public News createNewsReturn(String title, String body, String author, String email, LocalDateTime datePosted) {
+    public News createNewsReturn(String title, String body, String email, LocalDateTime datePosted) {
         LOG.info("createNewsReturn");
         News newNews = new News();
         try {
-            newNews.setTitle(title);
-            newNews.setBody(body);
-            newNews.setAuthor(author);
-            newNews.setEmail(email);
-            newNews.setDatePosted(datePosted);
-            entityManager.persist(newNews);
+            User author = getUserByEmail(email);
+            if (author != null) {
+                newNews.setTitle(title);
+                newNews.setBody(body);
+                newNews.setAuthor(author);
+                newNews.setEmail(email);
+                newNews.setDatePosted(datePosted);
+                author.getNews().add(newNews);
+                entityManager.persist(author);
+                entityManager.persist(newNews);
+            } else {
+                LOG.warning("User not found for email: " + email);
+            }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new EJBException(ex);
         }
         return newNews;
+    }
+
+    private User getUserByEmail(String email) {
+        try {
+            TypedQuery<User> typedQuery = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            typedQuery.setParameter("email", email);
+            return typedQuery.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public void addPhotoToNews(Long newsId, String filename, String fileType, byte[] fileContent) {

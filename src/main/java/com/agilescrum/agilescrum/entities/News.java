@@ -22,7 +22,7 @@ public class News {
 
     private String title;
     private String body;
-    private String author;
+    private User author;
     private String email;
     private LocalDateTime datePosted;
     private NewsPhoto image;
@@ -44,11 +44,12 @@ public class News {
         this.body = body;
     }
 
-    public String getAuthor() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

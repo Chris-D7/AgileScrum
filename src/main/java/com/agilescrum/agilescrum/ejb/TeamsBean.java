@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @Stateless
 public class TeamsBean {
 
-    @Inject
-    UserBean userBean;
-
     private static final Logger LOG = Logger.getLogger(TeamsBean.class.getName());
 
     @PersistenceContext
@@ -92,6 +89,9 @@ public class TeamsBean {
                 x.getTeams().remove(teamToDelete);
             });
             if (teamToDelete != null) {
+                entityManager.createQuery("DELETE FROM Sprint s WHERE s.team = :team")
+                        .setParameter("team", teamToDelete)
+                        .executeUpdate();
                 entityManager.remove(teamToDelete);
             } else {
                 LOG.warning("Team with ID " + teamId + " not found. Unable to delete.");

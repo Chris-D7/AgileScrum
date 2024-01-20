@@ -20,6 +20,14 @@ public class User {
 
     private String username;
 
+    private String email;
+
+    private String password;
+
+    private Collection<Teams> teams;
+
+    private Collection<News> news;
+
     @Basic
     public String getUsername() {
         return username;
@@ -28,12 +36,6 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
-
-    private String email;
-
-    private String password;
-
-    private Collection<Teams> teams;
 
     public String getEmail() {
         return email;
@@ -58,5 +60,14 @@ public class User {
 
     public void setTeams(Collection<Teams> teams) {
         this.teams = teams;
+    }
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    public Collection<News> getNews() {
+        return news;
+    }
+
+    public void setNews(Collection<News> news) {
+        this.news = news;
     }
 }

@@ -4,10 +4,21 @@
 
 
 <t:pageTemplate pageTitle="${team.subject}">
-    <h1 style="word-wrap: break-word;">${team.subject}</h1>
+    <h1 class="text-uppercase" style="word-wrap: break-word;">${team.subject}</h1>
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 offset-md-3">
+
+                <div class="card mt-4 mb-5">
+                    <div class="card-body">
+                        <h3 class="card-title">Current Sprint</h3>
+                        <c:if test="${not empty currentSprint}">
+                            <p class="card-text">End Date: ${currentSprint.endDate}</p>
+                        </c:if>
+                        <a href="${pageContext.request.contextPath}/SprintPage?id=${team.id}" class="btn btn-primary mt-3">View Sprints</a>
+                    </div>
+                </div>
+
                 <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                 <button id="toggleFormButton" class="btn btn-primary mb-3">Edit</button>
                 </c:if>
