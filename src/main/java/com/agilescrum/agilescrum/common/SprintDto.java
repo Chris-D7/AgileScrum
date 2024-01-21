@@ -13,6 +13,8 @@ public class SprintDto {
     private Integer number;
     private String review;
     private List<TaskDto> tasks;
+    private Integer totalTasks;
+    private Integer doneTasks;
 
     public SprintDto(Long id, LocalDateTime endDate, Long team, Integer number, String review, List<TaskDto> tasks) {
         this.id = id;
@@ -21,6 +23,8 @@ public class SprintDto {
         this.number = number;
         this.review = review;
         this.tasks = tasks;
+        this.totalTasks = 0;
+        this.doneTasks = 0;
     }
 
     public Long getId() {
@@ -47,5 +51,25 @@ public class SprintDto {
 
     public void setTasks(List<TaskDto> tasks) {
         this.tasks = tasks;
+    }
+
+    public Integer getTotalTasks() {
+        return totalTasks;
+    }
+
+    public void setTotalTasks(Integer totalTasks) {
+        this.totalTasks = totalTasks;
+    }
+
+    public Integer getDoneTasks() {
+        return doneTasks;
+    }
+
+    public void setDoneTasks(Integer doneTasks) {
+        this.doneTasks = doneTasks;
+    }
+
+    public void addDoneTasks(){
+        doneTasks = doneTasks+1;
     }
 }

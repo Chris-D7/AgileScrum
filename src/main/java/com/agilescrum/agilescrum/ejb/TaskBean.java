@@ -70,7 +70,7 @@ public class TaskBean {
         try {
             List<TaskDto> taskDtos = new ArrayList<>();
             tasks.forEach(x -> {
-                taskDtos.add(new TaskDto(x.getId(), x.getDescription(), x.getSprint().getId(), x.getAssignedUser().getId(), x.getAssignedUser().getUsername()));
+                taskDtos.add(new TaskDto(x.getId(), x.getDescription(), x.getStatus(), x.getSprint().getId(), x.getAssignedUser().getEmail(), x.getAssignedUser().getUsername()));
             });
 
             LOG.info("Tasks copied to DTO successfully");
@@ -80,4 +80,26 @@ public class TaskBean {
             throw new RuntimeException("Error copying tasks to DTO", ex);
         }
     }
+
+    @Transactional
+    public void updateTaskStatus(Long taskId) {
+        LOG.info("updateTaskStatus");
+        try {
+            Task task = entityManager.find(Task.class, taskId);
+            if (task != null) {
+                if(task.getStatus()==Boolean.FALSE){
+                    task.setStatus(Boolean.TRUE);
+                } else {
+                    task.setStatus(Boolean.FALSE);
+                }
+                entityManager.persist(task);
+                LOG.info("Task status updated: " + taskId);
+            } else {
+                LOG.warning("Task not found!");
+            }
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Error updating task status", ex);
+        }
+    }
+
 }

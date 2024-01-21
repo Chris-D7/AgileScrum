@@ -9,14 +9,39 @@
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <c:if test="${not empty currentSprint}">
-          <div class="card mt-4 mb-5">
+          <div class="card mt-4">
             <div class="card-body">
               <h3 class="card-title">Current Sprint: ${currentSprint.number}</h3>
-              <p class="card-text">End Date: ${currentSprint.endDate}</p>
-              <p class="card-text">Tasks:</p>
-              <ul class="list-group">
+              <p class="card-text mb-1">End Date: ${currentSprint.endDate}</p>
+              <p class="card-text mb-1 mt-2">Completion:</p>
+              <div class="progress" role="progressbar" aria-valuenow="${currentSprint.doneTasks}" aria-valuemin="0" aria-valuemax="${currentSprint.totalTasks}">
+                <div class="progress-bar bg-success" style="width: ${currentSprint.totalTasks > 0 ? Math.floor((currentSprint.doneTasks / currentSprint.totalTasks) * 100) : 0}%">
+                    ${currentSprint.totalTasks > 0 ? Math.floor((currentSprint.doneTasks / currentSprint.totalTasks) * 100) : 0}%
+                </div>
+              </div>
+              <p class="card-text mb-1 mt-2">Tasks:</p>
+              <ul class="list-group mb-4">
                 <c:forEach var="task" items="${currentSprint.tasks}">
-                  <li class="list-group-item">${task.description} - Assigned to: ${task.assignedUsername}</li>
+                  <li class="list-group-item ${task.status ? 'bg-success' : 'bg-danger'} p-2 text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p class="mb-0">${task.description} - Assigned to: ${task.assignedUsername}</p>
+                      </div>
+
+                      <c:if test="${pageContext.request.getRemoteUser() eq task.assignedUserEmail}">
+                        <form id="completeTaskForm_${task.id}" action="${pageContext.request.contextPath}/TaskStatus" method="post" class="form-inline">
+                          <input type="hidden" name="taskId" value="${task.id}">
+                          <input type="hidden" name="teamId" value="${team.id}">
+                          <div class="form-check">
+                            <button type="submit" class="btn btn-outline-light">
+                                Toggle
+                            </button>
+                          </div>
+                        </form>
+                      </c:if>
+                    </div>
+                  </li>
+
                 </c:forEach>
               </ul>
               <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
@@ -73,25 +98,37 @@
         </c:if>
 
         <c:if test="${not empty sprints}">
-          <h3 class="mb-1">Past Sprints</h3>
+          <h3 class="mb-1 mt-4">Past Sprints</h3>
           <ul class="list-group">
             <c:forEach var="sprint" items="${sprints}">
               <c:if test="${sprint != currentSprint}">
               <li class="list-group-item">
                 <h3 class="mb-1">Sprint ${sprint.number}</h3>
-                <p class="mb-1">End Date: ${sprint.endDate}</p>
-                <p class="card-text">Tasks:</p>
-                <ul class="list-group">
+                <p class="mb-1 mt-2">End Date: ${sprint.endDate}</p>
+                <p class="card-text mb-1 mt-2">Completion:</p>
+                <div class="progress" role="progressbar" aria-valuenow="${sprint.doneTasks}" aria-valuemin="0" aria-valuemax="${sprint.totalTasks}">
+                  <div class="progress-bar bg-success" style="width: ${sprint.totalTasks > 0 ? Math.floor((sprint.doneTasks / sprint.totalTasks) * 100) : 0}%">
+                      ${sprint.totalTasks > 0 ? Math.floor((sprint.doneTasks / sprint.totalTasks) * 100) : 0}%
+                  </div>
+                </div>
+                <p class="card-text mb-1 mt-2">Tasks:</p>
+                <ul class="list-group mb-4">
                   <c:forEach var="task" items="${sprint.tasks}">
-                    <li class="list-group-item">${task.description} - Assigned to: ${task.assignedUsername}</li>
+                    <li class="list-group-item ${task.status ? 'bg-success' : 'bg-danger'} p-2 text-white">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <p class="mb-0">${task.description} - Assigned to: ${task.assignedUsername}</p>
+                        </div>
+                      </div>
+                    </li>
                   </c:forEach>
                 </ul>
                 <c:if test="${not empty sprint.review}">
-                  <p class="mb-1">Review: ${sprint.review}</p>
+                  <p class="mb-1 fw-bold">Review: ${sprint.review}</p>
                 </c:if>
                 <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                   <form id="reviewForm_${sprint.id}" action="${pageContext.request.contextPath}/SprintReview" method="post">
-                    <input type="text" name="review" id="review" class="form-control">
+                    <input type="text" name="review" id="review" class="form-control" placeholder="Write a Review...">
                     <input type="hidden" name="sprintId" value="${sprint.id}">
                     <input type="hidden" name="id" value="${team.id}">
                     <button type="submit" class="btn btn-primary mt-2">Write Review</button>

@@ -21,6 +21,9 @@ import java.util.logging.Logger;
 @Stateless
 public class SprintBean {
 
+    @Inject
+    TaskBean taskBean;
+
     private static final Logger LOG = Logger.getLogger(SprintBean.class.getName());
 
     @PersistenceContext
@@ -47,6 +50,13 @@ public class SprintBean {
         sprints.forEach(x -> {
             try {
                 SprintDto sprintDto = new SprintDto(x.getId(), x.getEndDate(), x.getTeam().getId(), x.getNumber(), x.getReview(), new ArrayList<>());
+                sprintDto.setTasks(taskBean.findTasksBySprint(sprintDto.getId()));
+                sprintDto.getTasks().forEach(y -> {
+                    if(y.getStatus()){
+                        sprintDto.addDoneTasks();
+                    }
+                });
+                sprintDto.setTotalTasks(sprintDto.getTasks().size());
                 sprintDtos.add(sprintDto);
             } catch (NumberFormatException e) {
                 LOG.warning("Error converting values: " + e.getMessage());

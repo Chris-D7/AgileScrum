@@ -88,7 +88,12 @@ public class TeamsBean {
             teamToDelete.getMembers().forEach(x -> {
                 x.getTeams().remove(teamToDelete);
             });
+
             if (teamToDelete != null) {
+                entityManager.createQuery("DELETE FROM Task t WHERE t.sprint.team = :team")
+                        .setParameter("team", teamToDelete)
+                        .executeUpdate();
+
                 entityManager.createQuery("DELETE FROM Sprint s WHERE s.team = :team")
                         .setParameter("team", teamToDelete)
                         .executeUpdate();
@@ -129,6 +134,11 @@ public class TeamsBean {
             User member = entityManager.find(User.class, memberId);
 
             if (team != null && member != null) {
+                entityManager.createQuery("DELETE FROM Task t WHERE t.assignedUser = :user AND t.sprint.team = :team")
+                        .setParameter("user", member)
+                        .setParameter("team", team)
+                        .executeUpdate();
+
                 team.getMembers().remove(member);
                 member.getTeams().remove(team);
                 entityManager.merge(team);

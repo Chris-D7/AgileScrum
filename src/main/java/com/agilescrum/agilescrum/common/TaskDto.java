@@ -5,15 +5,15 @@ public class TaskDto {
     private String description;
     private Boolean status;
     private Long sprintId;
-    private Long assignedUserId;
+    private String assignedUserEmail;
     private String assignedUsername;
 
-    public TaskDto(Long id, String description, Long sprintId, Long assignedUserId, String assignedUsername) {
+    public TaskDto(Long id, String description, Boolean status, Long sprintId, String assignedUserEmail, String assignedUsername) {
         this.id = id;
         this.description = description;
-        this.status = Boolean.FALSE;
+        this.status = status;
         this.sprintId = sprintId;
-        this.assignedUserId = assignedUserId;
+        this.assignedUserEmail = assignedUserEmail;
         this.assignedUsername = assignedUsername;
     }
 
@@ -33,8 +33,8 @@ public class TaskDto {
         return sprintId;
     }
 
-    public Long getAssignedUserId() {
-        return assignedUserId;
+    public String getAssignedUserEmail() {
+        return assignedUserEmail;
     }
 
     public String getAssignedUsername() {

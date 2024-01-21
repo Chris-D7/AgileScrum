@@ -11,11 +11,32 @@
 
                 <div class="card mt-4 mb-5">
                     <div class="card-body">
-                        <h3 class="card-title">Current Sprint</h3>
-                        <c:if test="${not empty currentSprint}">
-                            <p class="card-text">End Date: ${currentSprint.endDate}</p>
+                        <c:if test="${empty currentSprint}">
+                            <h3 class="card-title">No Sprint In Progress</h3>
                         </c:if>
-                        <a href="${pageContext.request.contextPath}/SprintPage?id=${team.id}" class="btn btn-primary mt-3">View Sprints</a>
+                        <c:if test="${not empty currentSprint}">
+                                    <h3 class="card-title">Current Sprint: ${currentSprint.number}</h3>
+                                    <p class="card-text mb-1">End Date: ${currentSprint.endDate}</p>
+                                    <p class="card-text mb-1 mt-2">Completion:</p>
+                                    <div class="progress" role="progressbar" aria-valuenow="${currentSprint.doneTasks}" aria-valuemin="0" aria-valuemax="${currentSprint.totalTasks}">
+                                        <div class="progress-bar bg-success" style="width: ${currentSprint.totalTasks > 0 ? Math.floor((currentSprint.doneTasks / currentSprint.totalTasks) * 100) : 0}%">
+                                                ${currentSprint.totalTasks > 0 ? Math.floor((currentSprint.doneTasks / currentSprint.totalTasks) * 100) : 0}%
+                                        </div>
+                                    </div>
+                                    <p class="card-text mb-1 mt-2">Tasks:</p>
+                                    <ul class="list-group mb-4">
+                                        <c:forEach var="task" items="${currentSprint.tasks}">
+                                            <li class="list-group-item ${task.status ? 'bg-success' : 'bg-danger'} p-2 text-white">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <p class="mb-0">${task.description} - Assigned to: ${task.assignedUsername}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                        </c:if>
+                        <a href="${pageContext.request.contextPath}/SprintPage?id=${team.id}" class="btn btn-primary">View Sprints</a>
                     </div>
                 </div>
 

@@ -6,6 +6,7 @@ import com.agilescrum.agilescrum.common.TeamsDto;
 import com.agilescrum.agilescrum.ejb.SprintBean;
 import com.agilescrum.agilescrum.ejb.TaskBean;
 import com.agilescrum.agilescrum.ejb.TeamsBean;
+import com.agilescrum.agilescrum.ejb.UserBean;
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -20,7 +21,7 @@ import java.util.List;
 public class SprintPage extends HttpServlet {
 
     @Inject
-    TaskBean taskBean;
+    UserBean userBean;
 
     @Inject
     SprintBean sprintBean;
@@ -37,9 +38,6 @@ public class SprintPage extends HttpServlet {
 
         if (isTeamMember) {
             List<SprintDto> sprints = sprintBean.findSprintsByTeam(teamId);
-            sprints.forEach(x -> {
-                x.setTasks(taskBean.findTasksBySprint(x.getId()));
-            });
             request.setAttribute("sprints", sprints);
             request.setAttribute("currentSprint", sprintBean.findCurrentSprint(sprints));
             request.setAttribute("team", team);
