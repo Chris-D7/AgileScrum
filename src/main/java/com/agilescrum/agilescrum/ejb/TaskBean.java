@@ -21,6 +21,7 @@ public class TaskBean {
     @PersistenceContext
     EntityManager entityManager;
 
+    // Creates a new task with the specified description, assigned user, and sprint
     @Transactional
     public void createTask(String description, Long sprintId, Long userId) {
         LOG.info("createTask");
@@ -43,11 +44,10 @@ public class TaskBean {
             }
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Error creating task", ex);
-            // Rethrow the exception to make sure it's not silently ignored
-            throw new RuntimeException("Error creating task", ex);
         }
     }
 
+    // Retrieves a list of TaskDto objects for a given sprint
     public List<TaskDto> findTasksBySprint(Long sprintId) {
         LOG.info("findTasksBySprint");
         try {
@@ -65,22 +65,23 @@ public class TaskBean {
         }
     }
 
+    // Converts a list of Task entities to a list of TaskDto objects
     private List<TaskDto> copyTasksToDto(List<Task> tasks) {
         LOG.info("copyTasksToDTO");
+        List<TaskDto> taskDtos = new ArrayList<>();
         try {
-            List<TaskDto> taskDtos = new ArrayList<>();
             tasks.forEach(x -> {
                 taskDtos.add(new TaskDto(x.getId(), x.getDescription(), x.getStatus(), x.getSprint().getId(), x.getAssignedUser().getEmail(), x.getAssignedUser().getUsername()));
             });
 
             LOG.info("Tasks copied to DTO successfully");
-            return taskDtos;
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Error copying tasks to DTO", ex);
-            throw new RuntimeException("Error copying tasks to DTO", ex);
         }
+        return taskDtos;
     }
 
+    // Updates the status of a specific task (toggles between true and false)
     @Transactional
     public void updateTaskStatus(Long taskId) {
         LOG.info("updateTaskStatus");

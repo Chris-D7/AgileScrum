@@ -29,6 +29,7 @@ public class SprintBean {
     @PersistenceContext
     EntityManager entityManager;
 
+    // Retrieves a list of SprintDto objects for a given team, ordered by end date
     public List<SprintDto> findSprintsByTeam(Long team) {
         LOG.info("findSprintsByTeam");
 
@@ -44,6 +45,7 @@ public class SprintBean {
         }
     }
 
+    // Converts a list of Sprint entities to a list of SprintDto objects
     private List<SprintDto> copySprintToDto(List<Sprint> sprints){
         LOG.info("copySprintToDto");
         List<SprintDto> sprintDtos = new ArrayList<>();
@@ -65,13 +67,15 @@ public class SprintBean {
         return sprintDtos;
     }
 
+    // Creates a new sprint for a given team with the specified end date
     public void createSprint(Long teamId, LocalDateTime endDate) {
         LOG.info("createSprint");
 
         try {
             Teams team = entityManager.find(Teams.class, teamId);
             if (team != null) {
-                // Count existing sprints for the team
+
+                // Count existing sprints for the team, for the Sprint number
                 Long numberOfSprints = entityManager.createQuery(
                                 "SELECT COUNT(s) FROM Sprint s WHERE s.team.id = :teamId", Long.class)
                         .setParameter("teamId", teamId)
@@ -81,7 +85,7 @@ public class SprintBean {
 
                 sprint.setEndDate(endDate);
 
-                // Increment the number if numberOfSprints is not null
+                // Increment the number of Sprints
                 sprint.setNumber((numberOfSprints.intValue() + 1));
 
                 sprint.setTeam(team);
@@ -95,6 +99,9 @@ public class SprintBean {
         }
     }
 
+    // Finds the current sprint based on the current date, which
+    // is compared to the end date of the sprint to determine
+    // if the sprint is ongoing (currentSprint)
     public SprintDto findCurrentSprint(List<SprintDto> sprints) {
         LOG.info("findCurrentSprint");
         LocalDateTime currentTime = LocalDateTime.now();
@@ -107,6 +114,7 @@ public class SprintBean {
         return null;
     }
 
+    // Updates the review (retrospective text) for a specific sprint
     public void updateReview(Long sprintId, String updatedReview) {
         LOG.info("updateReview");
         Sprint sprint = entityManager.find(Sprint.class, sprintId);

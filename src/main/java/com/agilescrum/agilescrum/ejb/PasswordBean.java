@@ -11,11 +11,15 @@ import java.util.logging.Logger;
 @Stateless
 public class PasswordBean {
     private static final Logger LOG = Logger.getLogger(PasswordBean.class.getName());
+
+    // Converts a plain-text password to its SHA-256 hash representation
     public String convertToSha256(String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(password.getBytes(StandardCharsets.UTF_8));
             byte[] digest = messageDigest.digest();
+
+            // Convert the byte array to a hexadecimal string
             final StringBuilder hexString = new StringBuilder();
             for (int i = 0; i < digest.length; i++) {
                 final String hex = Integer.toHexString(0xff & digest[i]);

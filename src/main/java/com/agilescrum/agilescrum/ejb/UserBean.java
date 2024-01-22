@@ -26,6 +26,8 @@ public class UserBean {
     @PersistenceContext
     EntityManager entityManager;
 
+    /*
+    // Finds the current user by ID and returns a UserDto object
     public UserDto findCurrentUser(Long id) {
         LOG.info("findCurrentUser");
         try {
@@ -38,6 +40,7 @@ public class UserBean {
         }
     }
 
+    // Finds the username associated with the provided email
     public String findUsernameByEmail(String email) {
         LOG.info("findUsernameByEmail");
         try {
@@ -49,6 +52,7 @@ public class UserBean {
         }
     }
 
+    // Finds the user ID associated with the provided emai
     public Long findIdByEmail(String email) {
         LOG.info("findIdByEmail");
         try {
@@ -60,6 +64,7 @@ public class UserBean {
         }
     }
 
+    // Finds a user by email and returns a UserDto object
     public UserDto findUserByEmail(String email) {
         LOG.info("findIdByEmail");
         try {
@@ -69,8 +74,9 @@ public class UserBean {
         } catch (Exception ex) {
             throw new EJBException(ex);
         }
-    }
+    } */
 
+    // Finds all users in the system and returns a list of UserDto objects
     public List<UserDto> findAllUsers(){
         LOG.info("findAllUsers");
         try{
@@ -82,11 +88,13 @@ public class UserBean {
         }
     }
 
+    // Converts a single User entity to a UserDto object
     private UserDto copySingleUserToDto(User user){
         UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail());
         return userDto;
     }
 
+    // Converts a list of User entities to a list of UserDto objects
     private List<UserDto> copyUsersToDto(List<User> users){
         List<UserDto> userDtos = new ArrayList<>();
         users.forEach(x -> {
@@ -96,12 +104,14 @@ public class UserBean {
         return userDtos;
     }
 
+    // Creates a new user with the specified username, email, and password
     public void createUser(String username, String email, String password) {
         LOG.info("createUser");
         try {
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setEmail(email);
+            // Convert the provided password to SHA-256 hash using PasswordBean
             newUser.setPassword(passwordBean.convertToSha256(password));
             entityManager.persist(newUser);
         } catch (Exception ex){

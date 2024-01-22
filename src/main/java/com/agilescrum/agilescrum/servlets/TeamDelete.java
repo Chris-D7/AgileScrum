@@ -16,12 +16,16 @@ public class TeamDelete extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirects to the Teams page
         response.sendRedirect(request.getContextPath() + "/Teams");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Call TeamsBean to delete the team with the specified ID
         teamsBean.deleteTeam(Long.parseLong(request.getParameter("teamId")));
+
+        // Redirect back to the Teams page after team deletion
         response.sendRedirect(request.getContextPath() + "/Teams");
     }
 }

@@ -17,9 +17,15 @@ public class NewsPhotos extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve the newsid parameter from the request
         Long newsid = Long.parseLong(request.getParameter("newsid"));
+
+        // Call the NewsBean to find the photo by news ID
         NewsPhotoDto photo = newsBean.findPhotoByNewsId(newsid);
-        if(photo != null){
+
+        // Check if the photo exists
+        if (photo != null) {
+            // Set response content type, length, and write the photo content to the output stream
             response.setContentType(photo.getFileType());
             response.setContentLength(photo.getFileContent().length);
             response.getOutputStream().write(photo.getFileContent());

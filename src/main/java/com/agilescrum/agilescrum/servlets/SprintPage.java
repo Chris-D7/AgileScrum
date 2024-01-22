@@ -21,9 +21,6 @@ import java.util.List;
 public class SprintPage extends HttpServlet {
 
     @Inject
-    UserBean userBean;
-
-    @Inject
     SprintBean sprintBean;
 
     @Inject
@@ -31,18 +28,29 @@ public class SprintPage extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve team ID from the request parameter
         Long teamId = Long.parseLong(request.getParameter("id"));
+
+        // Retrieve team details based on the team ID
         TeamsDto team = teamsBean.findTeamById(teamId);
 
+        // Check if the current user is a team member
         boolean isTeamMember = checkIfTeamMember(request, team);
 
+        // If the user is a team member, proceed to retrieve and display sprint information
         if (isTeamMember) {
+            // Retrieve sprints for the team
             List<SprintDto> sprints = sprintBean.findSprintsByTeam(teamId);
+
+            // Set attributes for the JSP page
             request.setAttribute("sprints", sprints);
             request.setAttribute("currentSprint", sprintBean.findCurrentSprint(sprints));
             request.setAttribute("team", team);
+
+            // Forward the request to the sprint page
             request.getRequestDispatcher("/WEB-INF/pages/sprintpage.jsp").forward(request, response);
         } else {
+            // If the user is not a team member, redirect to the Teams page
             response.sendRedirect(request.getContextPath() + "/Teams");
         }
     }
@@ -50,19 +58,26 @@ public class SprintPage extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            Long teamId = Long.parseLong(request.getParameter("id"));
-            if (!checkIfUserIsMaster(request, teamId)) {
+        // Retrieve team ID from the request parameter
+        Long teamId = Long.parseLong(request.getParameter("id"));
+
+        // Check if the current user is the master of the team
+        if (!checkIfUserIsMaster(request, teamId)) {
+            // If the user is not the master, redirect to the Teams page
             response.sendRedirect(request.getContextPath() + "/Teams");
-            } else {
+        } else {
+            // If the user is the master, proceed to create a new sprint
+            LocalDateTime endDate = LocalDateTime.parse(request.getParameter("endDate"));
 
-                LocalDateTime endDate = LocalDateTime.parse(request.getParameter("endDate"));
+            // Create a new sprint for the team
+            sprintBean.createSprint(teamId, endDate);
 
-                sprintBean.createSprint(teamId, endDate);
-
-                response.sendRedirect(request.getContextPath() + "/SprintPage?id=" + teamId);
-            }
+            // Redirect back to the SprintPage with the updated sprint information
+            response.sendRedirect(request.getContextPath() + "/SprintPage?id=" + teamId);
+        }
     }
 
+    // Check if the current user is the master or a member of the team
     private boolean checkIfTeamMember(HttpServletRequest request, TeamsDto teamDto) {
         String currentUserEmail = request.getRemoteUser();
 
@@ -70,6 +85,7 @@ public class SprintPage extends HttpServlet {
                 .anyMatch(member -> currentUserEmail.equals(member.getEmail()));
     }
 
+    // Checks if the current user is the master of the team
     private boolean checkIfUserIsMaster(HttpServletRequest request, Long teamId) {
         String currentUserEmail = request.getRemoteUser();
         TeamsDto teamDto = teamsBean.findTeamById(teamId);

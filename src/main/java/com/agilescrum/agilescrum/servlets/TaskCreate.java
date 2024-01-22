@@ -16,6 +16,7 @@ public class TaskCreate extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirects to the Teams page
         response.sendRedirect(request.getContextPath() + "/Teams");
     }
 
@@ -28,8 +29,10 @@ public class TaskCreate extends HttpServlet {
             String description = request.getParameter("description");
             Long userId = Long.parseLong(request.getParameter("userId"));
 
+            // Call TaskBean to create the task
             taskBean.createTask(description, sprintId, userId);
 
+            // Redirect back to the SprintPage with the updated task information
             response.sendRedirect(request.getContextPath() + "/SprintPage?id=" + teamId);
         } catch (Exception e) {
             // Handle exceptions appropriately (e.g., log and display an error message)

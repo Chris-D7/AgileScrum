@@ -11,9 +11,13 @@
 
                 <div class="card mt-4 mb-5">
                     <div class="card-body">
+
+                        <!-- Checking if there is no current sprint -->
                         <c:if test="${empty currentSprint}">
                             <h3 class="card-title">No Sprint In Progress</h3>
                         </c:if>
+
+                        <!-- Displaying information about the current sprint if exists -->
                         <c:if test="${not empty currentSprint}">
                                     <h3 class="card-title">Current Sprint: ${currentSprint.number}</h3>
                                     <p class="card-text mb-1">End Date: ${currentSprint.endDate}</p>
@@ -40,18 +44,26 @@
                     </div>
                 </div>
 
+                <!-- Button to toggle edit forms (visible to team master) -->
                 <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                 <button id="toggleFormButton" class="btn btn-primary mb-3">Edit</button>
                 </c:if>
+
+                <!-- Displaying team information -->
                 <div class="card">
                     <div class="card-body">
+
+                        <!-- Displaying master's username -->
                         <p class="card-text">Master: ${team.master.username}</p>
 
+                        <!-- Displaying members' usernames in a list -->
                         <h3 class="mt-4">Members</h3>
                         <ul class="list-group">
                             <c:forEach var="member" items="${team.members}">
                                 <li class="list-group-item">
                                         ${member.username}
+
+                                            <!-- Delete member form (visible to team master) -->
                                             <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                                                 <form class="deleteMemberForm" id="deleteMemberForm" action="${pageContext.request.contextPath}/TeamDeleteMember" method="post" style="display: none;">
                                                     <input type="hidden" name="teamId" value="${team.id}">
@@ -63,6 +75,8 @@
                             </c:forEach>
                         </ul>
                     </div>
+
+                    <!-- Add member form (visible to team master) -->
                     <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                         <form style="display: none;" class="m-3" id="addMemberForm" action="${pageContext.request.contextPath}/TeamAddMember" method="post">
                             <div class="form-group">
@@ -73,12 +87,16 @@
                         </form>
                     </c:if>
                 </div>
+
+                <!-- Delete team form (visible to team master) -->
                 <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
                     <form style="display: none;" id="deleteForm" action="${pageContext.request.contextPath}/TeamDelete" method="post">
                         <input type="hidden" name="teamId" value="${team.id}">
                         <button type="submit" class="btn btn-danger ml-2 mt-2" onclick="return confirm('Are you sure you want to delete this team?')">Delete Team</button>
                     </form>
                 </c:if>
+
+                <!-- Leave team form (visible to team members) -->
                 <c:forEach var="member" items="${team.members}">
                     <c:if test="${pageContext.request.getRemoteUser() == member.email}">
                         <form id="leaveTeam" action="${pageContext.request.contextPath}/TeamDeleteMember" method="post">
@@ -92,6 +110,7 @@
         </div>
     </div>
 
+    <!-- JavaScript for toggling edit forms -->
     <c:if test="${pageContext.request.getRemoteUser() == team.master.email}">
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script>

@@ -16,6 +16,7 @@ public class UsergroupsBean {
     @PersistenceContext
     EntityManager entityManager;
 
+    // Finds the role associated with the user's email in the UserGroup entity
     public String findUsergroupRole(String email){
         LOG.info("findUsergroupRole");
         try {
@@ -32,6 +33,7 @@ public class UsergroupsBean {
         }
     }
 
+    // Finds the ID associated with the user's email in the UserGroup entity
     public Long findUsergroupId(String email){
         LOG.info("findUsergroupId");
         try {
@@ -46,6 +48,7 @@ public class UsergroupsBean {
         }
     }
 
+    // Updates the user group role based on the user's email
     public void updateUsergroup(String email, String role){
         LOG.info("updateUsergroup");
         UserGroup userGroup = entityManager.find(UserGroup.class, findUsergroupId(email));
@@ -60,6 +63,7 @@ public class UsergroupsBean {
         }
     }
 
+    // Creates a new user group with the specified email and default role
     public void createUsergroup(String email){
         LOG.info("createUsergroup");
         try {

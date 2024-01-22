@@ -16,17 +16,21 @@ public class SprintReview extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirects to the Teams page
         response.sendRedirect(request.getContextPath() + "/Teams");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve sprint ID, updated review, and team ID from request parameters
         Long sprintId = Long.parseLong(request.getParameter("sprintId"));
         String updatedReview = request.getParameter("review");
         Long teamId = Long.parseLong(request.getParameter("id"));
 
+        // Update the sprint review using SprintBean
         sprintBean.updateReview(sprintId, updatedReview);
 
+        // Redirect back to the SprintPage with the updated sprint information
         response.sendRedirect(request.getContextPath() + "/SprintPage?id=" + teamId);
     }
 }

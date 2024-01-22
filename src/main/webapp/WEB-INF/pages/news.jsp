@@ -9,6 +9,7 @@
   <c:if test="${pageContext.request.isUserInRole('RESEARCH') || pageContext.request.isUserInRole('ADMIN')}">
     <button id="toggleFormButton" class="btn btn-primary">Create</button>
 
+    <!-- Create News Form -->
     <form id="newsForm" method="POST" action="${pageContext.request.contextPath}/News" enctype="multipart/form-data" style="display: none;">
       <div class="form-group">
         <label for="newsTitle">Title</label>
@@ -30,11 +31,12 @@
       <button type="submit" class="btn btn-primary">Post</button>
     </form>
 
+    <!-- Script for toggling the visibility of the form -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
       $(document).ready(function () {
         $("#toggleFormButton").click(function (e) {
-          e.preventDefault(); // Prevent the default form submission
+          e.preventDefault();
           $("#newsForm").toggle();
 
           // Update button text and class based on form visibility
@@ -48,6 +50,7 @@
     </script>
   </c:if>
 
+  <!-- Displaying News Cards -->
   <c:forEach var="news" items="${newsList}">
     <div class="card mb-4">
       <div class="card-body">

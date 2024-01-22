@@ -24,10 +24,8 @@ public class TeamsBean {
     @PersistenceContext
     EntityManager entityManager;
 
+    // Finds teams for the current user based on their email and returns a list of TeamsDto objects
     public List<TeamsDto> findTeamsForCurrentUser(String email) {
-        /*User currentUser = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-                .setParameter("email", email)
-                .getSingleResult();*/
         List<Teams> teams = entityManager.createQuery(
                         "SELECT DISTINCT t FROM Teams t LEFT JOIN t.members m WHERE t.master.email = :email OR m.email = :email", Teams.class)
                 .setParameter("email", email)
@@ -35,6 +33,7 @@ public class TeamsBean {
         return copyTeamsToDto(teams);
     }
 
+    // Finds a team by its ID and returns a TeamsDto object
     public TeamsDto findTeamById(Long id) {
         Teams team = entityManager.find(Teams.class, id);
         User master = team.getMaster();
@@ -48,6 +47,7 @@ public class TeamsBean {
         return new TeamsDto(team.getId(), team.getSubject(), masterDto, userDtos);
     }
 
+    // Converts a list of Teams entities to a list of TeamsDto objects
     private List<TeamsDto> copyTeamsToDto(List<Teams> teams) {
         List<TeamsDto> teamsDto = new ArrayList<>();
         teams.forEach(team -> {
@@ -66,6 +66,7 @@ public class TeamsBean {
         return teamsDto;
     }
 
+    // Creates a new team with the specified subject and assigns it to the master by using its email
     public void createTeam(String subject, String masterEmail) {
         try {
             User master = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
@@ -82,6 +83,7 @@ public class TeamsBean {
         }
     }
 
+    // Deletes a team and associated tasks and sprints by team ID
     public void deleteTeam(Long teamId) {
         try {
             Teams teamToDelete = entityManager.find(Teams.class, teamId);
@@ -107,6 +109,7 @@ public class TeamsBean {
         }
     }
 
+    // Adds a member to a team by team ID and member email
     public void addMemberToTeam(Long teamId, String memberEmail) {
         try {
             Teams team = entityManager.find(Teams.class, teamId);
@@ -128,6 +131,7 @@ public class TeamsBean {
         }
     }
 
+    // Deletes a member from a team by team ID and member ID
     public void deleteMemberFromTeam(Long teamId, Long memberId) {
         try {
             Teams team = entityManager.find(Teams.class, teamId);

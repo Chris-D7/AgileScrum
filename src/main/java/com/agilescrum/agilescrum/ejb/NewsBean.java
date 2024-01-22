@@ -25,6 +25,7 @@ public class NewsBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    // Retrieves all news articles in descending order of date posted
     public List<NewsDto> findAllNewsDesc() {
         LOG.info("findAllNews");
         try {
@@ -37,6 +38,7 @@ public class NewsBean {
         }
     }
 
+    // Converts a list of News entities to a list of NewsDto objects
     public List<NewsDto> copyNewsToDto(List<News> newsList) {
         List<NewsDto> newsDtos = new ArrayList<>();
         newsList.forEach(x -> {
@@ -55,6 +57,7 @@ public class NewsBean {
         return newsDtos;
     }
 
+    // Creates a new news article in the database
     public void createNews(String title, String body, String email, LocalDateTime datePosted) {
         LOG.info("createNews");
         User author = getUserByEmail(email);
@@ -71,6 +74,7 @@ public class NewsBean {
         }
     }
 
+    // Creates a new news article and returns the entity
     public News createNewsReturn(String title, String body, String email, LocalDateTime datePosted) {
         LOG.info("createNewsReturn");
         News newNews = new News();
@@ -94,6 +98,7 @@ public class NewsBean {
         return newNews;
     }
 
+    // Retrieves a user entity based on the provided email
     private User getUserByEmail(String email) {
         try {
             TypedQuery<User> typedQuery = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
@@ -104,6 +109,7 @@ public class NewsBean {
         }
     }
 
+    // Adds a photo to a news article in the database
     public void addPhotoToNews(Long newsId, String filename, String fileType, byte[] fileContent) {
         LOG.info("addPhotoToCar");
         NewsPhoto photo = new NewsPhoto();
@@ -115,6 +121,8 @@ public class NewsBean {
         photo.setNews(news);
         entityManager.persist(photo);
     }
+
+    // Finds a photo associated with a news article and returns the DTO
     public NewsPhotoDto findPhotoByNewsId(Long newsId) {
         LOG.info("findPhotoByNewsId");
         List<NewsPhoto> photos = entityManager
@@ -129,6 +137,7 @@ public class NewsBean {
                 photo.getFileContent());
     }
 
+    // Finds a photo entity associated with a news article
     public NewsPhoto findPhotoEntityByNewsId(Long newsId) {
         LOG.info("findPhotoByNewsId");
         NewsPhoto photo = entityManager
@@ -138,6 +147,7 @@ public class NewsBean {
         return photo;
     }
 
+    // Deletes a news article and its associated photo
     public void deleteNews(Long newsId) {
         try {
             deleteNewsPhoto(newsId);
@@ -150,6 +160,7 @@ public class NewsBean {
         }
     }
 
+    // Deletes the photo associated with a news article
     private void deleteNewsPhoto(Long newsId) {
         try {
             NewsPhoto newsPhoto = findPhotoEntityByNewsId(newsId);
